@@ -106,7 +106,7 @@ func dispatcher(ctx context.Context) ([]string, error) {
 }
 ```
 
-`NewTimedPool` receives as arguments 3 handlers: `Dispatcher`, `Worker` and `ErrorHandler`. It's declared like this:
+`NewTimedPool` receives as arguments 3 handlers: `Dispatcher`, `Worker` and `ErrorHandler`. 
 
 ```go
 // Worker - worker handler. Calls on task arriving.
@@ -118,3 +118,5 @@ type Dispatcher[Task any] func(ctx context.Context) ([]Task, error)
 // ErrorHandler - the function is called when error occured in dispatcher
 type ErrorHandler[Task any] func(ctx context.Context, err error)
 ```
+
+Also it receives 2 integers: workers count and time between dispatcher calls in milliseconds.
