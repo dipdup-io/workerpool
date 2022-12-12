@@ -65,3 +65,8 @@ func (pool *Pool[Task]) start(ctx context.Context) {
 func (pool *Pool[Task]) AddTask(task Task) {
 	pool.tasks <- task
 }
+
+// QueueSize - current count of tasks in pool
+func (pool *Pool[Task]) QueueSize() int {
+	return len(pool.tasks)
+}
