@@ -1,3 +1,3 @@
-module github.com/dipdup-net/workerpool
+module github.com/dipdup-io/workerpool
 
 go 1.19

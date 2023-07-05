@@ -70,3 +70,10 @@ func (pool *Pool[Task]) AddTask(task Task) {
 func (pool *Pool[Task]) QueueSize() int {
 	return len(pool.tasks)
 }
+
+// Clear - clears queue
+func (pool *Pool[Task]) Clear() {
+	for len(pool.tasks) > 0 {
+		<-pool.tasks
+	}
+}
