@@ -120,3 +120,95 @@ type ErrorHandler[Task any] func(ctx context.Context, err error)
 ```
 
 Also it receives 2 integers: workers count and time between dispatcher calls in milliseconds.
+
+# Group
+
+`Group` can be used for running processes with wait group. For example:
+
+```go
+// this program runs 2 ticker functions and waits its executed.
+func main() {
+	group := NewGroup()
+	group.Go(ticker3)
+	group.Go(ticker4)
+	group.Wait()
+}
+
+func ticker3() {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	var count int
+
+	for range ticker.C {
+		count++
+		log.Print("second")
+
+		if count == 5 {
+			return
+		}
+	}
+}
+
+func ticker4() {
+	ticker := time.NewTicker(time.Second * 2)
+	defer ticker.Stop()
+
+	var count int
+
+	for range ticker.C {
+		count++
+		log.Print("2 second")
+
+		if count == 5 {
+			return
+		}
+	}
+}
+```
+
+With using context:
+
+```go
+// the program runs two tickers and after 10 seconds cancel it using context cancellation
+func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	group := NewGroup()
+	group.GoCtx(ctx, ticker1)
+	group.GoCtx(ctx, ticker2)
+
+	time.Sleep(10 * time.Second)
+	cancel()
+
+	group.Wait()
+}
+
+func ticker1(ctx context.Context) {
+	ticker := time.NewTicker(time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			log.Print("second")
+		}
+	}
+}
+
+func ticker2(ctx context.Context) {
+	ticker := time.NewTicker(time.Second * 2)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			log.Print("2 second")
+		}
+	}
+}
+```
